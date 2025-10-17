@@ -1,0 +1,76 @@
+// app.js - minimal client-side JS for demo
+async function api(path, method='GET', body) {
+  const opts = { method, headers: {} };
+  if (body) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  const res = await fetch('/api' + path, opts);
+  return res.json();
+}
+
+function show(section) {
+  document.querySelectorAll('main .panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(section).classList.remove('hidden');
+  document.querySelectorAll('.navlink').forEach(n => n.classList.remove('active'));
+  if (section === 'login') document.getElementById('nav-login').classList.add('active');
+  if (section === 'signup') document.getElementById('nav-signup').classList.add('active');
+  if (section === 'profile') document.getElementById('nav-profile').classList.add('active');
+}
+
+document.getElementById('nav-login').onclick = (e) => { e.preventDefault(); show('login'); };
+document.getElementById('nav-signup').onclick = (e) => { e.preventDefault(); show('signup'); };
+document.getElementById('nav-profile').onclick = async (e) => { e.preventDefault(); await loadProfile(); show('profile'); };
+
+document.getElementById('btn-signup').addEventListener('click', async () => {
+  const username = document.getElementById('signup-username').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const msg = document.getElementById('signup-msg'); msg.textContent = '';
+  const res = await api('/signup', 'POST', { username, email, password });
+  if (!res.success) msg.textContent = res.message || 'Error';
+  else {
+    msg.style.color = 'green';
+    msg.textContent = 'Account created — logged in!';
+    await loadProfile();
+    show('profile');
+  }
+});
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const usernameOrEmail = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const msg = document.getElementById('login-msg'); msg.textContent = '';
+  const res = await api('/login', 'POST', { usernameOrEmail, password });
+  if (!res.success) { msg.style.color='red'; msg.textContent = res.message || 'Login failed'; }
+  else { msg.style.color='green'; msg.textContent = 'Logged in!'; await loadProfile(); show('profile'); }
+});
+
+async function loadProfile(){
+  const r = await api('/me', 'GET');
+  if (!r.loggedIn) { show('login'); return; }
+  document.getElementById('profile-name').textContent = r.user.username;
+  document.getElementById('profile-email').textContent = r.user.email;
+  document.getElementById('profile-data').value = JSON.stringify(r.user.profile || {}, null, 2);
+}
+
+document.getElementById('btn-save-profile').addEventListener('click', async () => {
+  const txt = document.getElementById('profile-data').value;
+  const msg = document.getElementById('profile-msg'); msg.textContent = '';
+  try {
+    const obj = JSON.parse(txt || '{}');
+    const res = await api('/profile', 'POST', { profile: obj });
+    if (res.success) { msg.style.color='green'; msg.textContent = 'Saved'; }
+    else { msg.style.color='red'; msg.textContent = 'Save failed'; }
+  } catch (e) {
+    msg.style.color='red'; msg.textContent = 'Invalid JSON';
+  }
+});
+
+document.getElementById('btn-logout').addEventListener('click', async () => {
+  await api('/logout', 'POST');
+  location.reload();
+});
+
+// start on login view
+show('login');
