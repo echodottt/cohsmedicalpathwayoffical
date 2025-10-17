@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>COHS Medical Pathway — Demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">COHS Medical Pathway</div>
+    <nav>
+      <a class="navlink active" href="#" id="nav-login">Login</a>
+      <a class="navlink" href="#" id="nav-signup">Sign Up</a>
+      <a class="navlink" href="#" id="nav-profile">Profile</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- LOGIN -->
+    <section id="login" class="panel">
+      <div class="left-icon"><img src="assets/card.png" alt="card" /></div>
+      <div class="panel-content">
+        <h1>LOGIN</h1>
+        <label>Username or Email
+          <input id="login-username" placeholder="username or email" />
+        </label>
+        <label>Password
+          <input id="login-password" type="password" placeholder="password" />
+        </label>
+        <button id="btn-login" class="cta">Login</button>
+        <p id="login-msg" class="msg"></p>
+      </div>
+    </section>
+
+    <!-- SIGNUP -->
+    <section id="signup" class="panel teal">
+      <div class="panel-content">
+        <h1>New? No problem!</h1>
+        <h2>SIGN UP</h2>
+        <label>Username
+          <input id="signup-username" placeholder="Choose a username" />
+        </label>
+        <label>Email
+          <input id="signup-email" placeholder="you@example.com" />
+        </label>
+        <label>Password
+          <input id="signup-password" type="password" placeholder="password" />
+        </label>
+        <button id="btn-signup" class="cta inverse">Create Account</button>
+        <p id="signup-msg" class="msg"></p>
+      </div>
+      <div class="right-icon"><img src="assets/clipboard.png" alt="clipboard" /></div>
+    </section>
+
+    <!-- PROFILE (protected) -->
+    <section id="profile" class="panel hidden">
+      <div class="panel-content">
+        <h1>Welcome, <span id="profile-name"></span></h1>
+        <p>Your email: <span id="profile-email"></span></p>
+
+        <h3>Saved data</h3>
+        <textarea id="profile-data" rows="6" placeholder='{"notes":"my notes..."}'></textarea>
+        <div style="margin-top:10px;">
+          <button id="btn-save-profile" class="cta">Save</button>
+          <button id="btn-logout" class="cta muted">Logout</button>
+        </div>
+        <p id="profile-msg" class="msg"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
